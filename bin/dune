@@ -1,0 +1,5 @@
+(executable
+ (public_name blockchain)
+ (name main)
+ (libraries blockchain core dream yojson)
+ (preprocess (pps ppx_yojson_conv)))
