@@ -8,7 +8,7 @@ let initChain () =
 
 let addBlock data chain = 
     let lastBlock = List.hd chain in
-    mineBlock lastBlock data :: chain;;
+    mineBlock lastBlock data 0 :: chain;;
 
 let rec isValidChain chain = 
     match chain with

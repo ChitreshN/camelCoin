@@ -8,7 +8,7 @@ val genesisBlock :unit -> block;;
 
 val blockHash : block -> string;;
 
-val mineBlock : block -> string -> block;;
+val mineBlock : block -> string -> int -> block;;
 
 val yojson_of_block : block -> Yojson.Safe.t;;
 
