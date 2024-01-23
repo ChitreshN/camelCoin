@@ -1,7 +1,9 @@
+open Ppx_yojson_conv_lib.Yojson_conv.Primitives;;
+
 type publicKey = {
     n : string; (*modulo*)
     e : string  (*public exponent*)
-}
+}[@@deriving yojson]
 
 type wallet = {
     balance     : int;
@@ -56,4 +58,3 @@ let transaction (sender:wallet) (reciever:wallet) amount =
     _transaction pubSender pubReciever amount;;
 
 let sign dataHash keyPair = Utils.sign keyPair dataHash
-
