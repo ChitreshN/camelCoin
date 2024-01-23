@@ -1,6 +1,6 @@
 (library
  (name blockchain)
- (libraries unix core digestif yojson)
+ (libraries unix core digestif yojson cryptokit)
  (preprocess (pps ppx_yojson_conv)))
 (env
   (dev

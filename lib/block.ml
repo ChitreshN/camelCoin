@@ -27,17 +27,12 @@ let initBlock timestamp prev_hash hash data height nounce  = {
     nounce          = nounce;
 }
 
-let hash inp = 
-    let open Digestif.SHA256 in
-    let rawHash = digest_string inp in
-    to_hex rawHash;;
-
-let blockHash blk   = hash (string_of_float blk.timestamp 
+let blockHash blk   = Utils.hash (string_of_float blk.timestamp 
                         ^ blk.prev_block_hash 
                         ^ blk.transaction 
                         ^ string_of_int blk.nounce)
 
-let genesisBlock()  = initBlock 0.0 "" (hash(string_of_float 0.0 ^ "" ^ "") ) "" 0 0;;
+let genesisBlock()  = initBlock 0.0 "" (Utils.hash(string_of_float 0.0 ^ "" ^ "") ) "" 0 0;;
 
 let rec mineBlock lastBlock data nounce = 
 
@@ -45,7 +40,10 @@ let rec mineBlock lastBlock data nounce =
     let timeStamp   = Unix.time() in
     let height      = lastBlock.height + 1 in
 
-    let hash        = hash (string_of_float timeStamp ^ lastHash ^ data ^ string_of_int nounce) in
+    let hash        = Utils.hash (string_of_float timeStamp 
+                                ^ lastHash 
+                                ^ data 
+                                ^ string_of_int nounce) in
 
     match String.sub hash 0 diff with 
     (*do something to generate strings of length diff instead of hardcoding 0's*)
