@@ -47,7 +47,7 @@ let rec mineBlock lastBlock data nounce =
                                 ^ data 
                                 ^ string_of_int nounce) in
 
-    if String.sub hash 0 diff <> firstBits then 
+    if String.sub hash 0 diff = firstBits then 
         initBlock timeStamp lastHash hash data height nounce
     else mineBlock lastBlock data (nounce + 1);;
 
