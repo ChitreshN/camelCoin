@@ -2,8 +2,10 @@ type wallet;;
 
 type pubWallet;;
 
+type transaction;;
+
 val initWallet : unit -> wallet;;
 
-val transaction : wallet-> wallet -> int -> pubWallet*pubWallet;;
+val transaction : wallet-> wallet -> int -> transaction;;
 
-val sign : string -> Cryptokit.RSA.key -> string;;
+val sign : Cryptokit.RSA.key -> string -> string;;

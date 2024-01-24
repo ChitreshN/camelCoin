@@ -2,19 +2,25 @@ open Ppx_yojson_conv_lib.Yojson_conv.Primitives;;
 
 type publicKey = {
     n : string; (*modulo*)
-    e : string  (*public exponent*)
+    e : string;  (*public exponent*)
 }[@@deriving yojson]
 
 type wallet = {
     balance     : int;
     keyPair     : Cryptokit.RSA.key;
-    publicKey   : publicKey
+    publicKey   : publicKey;
 }  
 
 type pubWallet = {
     balance     : int;
-    publicKey   : publicKey
-}  
+    publicKey   : publicKey;
+}[@@deriving yojson] 
+
+type transaction = {
+    id      : string;
+    input   : string;
+    outputs : pubWallet * pubWallet;
+}[@@deriving yojson]
 
 
 let initWallet() = 
@@ -29,9 +35,19 @@ let initWallet() =
         }
     };;
 
-let _transaction sender reciever amount = 
-    (*this should only return the balance and publicKey*)
-    match amount >= sender.balance with
+let transaction (sender:wallet) (reciever:wallet) amount = 
+    let pubSender = {
+        balance = sender.balance; publicKey = sender.publicKey
+    }
+    in
+
+    let pubReciever = {
+        balance = reciever.balance; publicKey = reciever.publicKey
+    }
+    in
+
+    let _transaction sender reciever amount = 
+        match amount >= sender.balance with
     true ->
         let newSender = {
             balance     = sender.balance - amount;
@@ -42,19 +58,15 @@ let _transaction sender reciever amount =
             publicKey   = reciever.publicKey
         } in
         (newSender,newReciever)
-    | false -> print_endline "no cash mate";(sender,reciever);;
+    | false -> print_endline "no cash mate";(sender,reciever) in
 
-let transaction (sender:wallet) (reciever:wallet) amount = 
-    let pubSender = {
-        balance = sender.balance; publicKey = sender.publicKey
+    let pubSender,pubReciever = _transaction pubSender pubReciever amount in
+    let timeStamp   = string_of_float @@ Unix.time() in
+        {
+            id = timeStamp;
+            input = "";
+            outputs = pubSender, pubReciever
         }
-    in
 
-    let pubReciever = {
-        balance = reciever.balance; publicKey = reciever.publicKey
-        }
-    in
 
-    _transaction pubSender pubReciever amount;;
-
-let sign dataHash keyPair = Utils.sign keyPair dataHash
+let sign = Utils.sign 
