@@ -12,6 +12,8 @@ type block = {
 
 let diff = 4;;
 
+let firstBits = String.make 4 '0'
+
 let getHash block = 
     block.hash;;
 
@@ -45,11 +47,13 @@ let rec mineBlock lastBlock data nounce =
                                 ^ data 
                                 ^ string_of_int nounce) in
 
-    match String.sub hash 0 diff with 
-    (*do something to generate strings of length diff instead of hardcoding 0's*)
-    | "0000"    -> initBlock timeStamp lastHash hash data height nounce
-    | _         -> mineBlock lastBlock data (nounce + 1)
+    if String.sub hash 0 diff <> firstBits then 
+        initBlock timeStamp lastHash hash data height nounce
+    else mineBlock lastBlock data (nounce + 1);;
+
+
 
 let yojson_of_block block = yojson_of_block block;;
 
 let block_of_yojson block = block_of_yojson block;;
+
