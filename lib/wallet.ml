@@ -19,6 +19,7 @@ type pubWallet = {
 type transaction = {
     id      : string;
     outputs : pubWallet * pubWallet;
+    signature: string
 }[@@deriving yojson]
 
 
@@ -33,6 +34,11 @@ let initWallet() =
             e = keyPair.e
         }
     };;
+
+let signTransaction id sender = 
+    let stringRepr = id in
+    let hashed = Utils.hash stringRepr in
+    Utils.sign sender.keyPair hashed   
 
 let transaction (sender:wallet) (reciever:wallet) amount = 
     let pubSender = {
@@ -51,7 +57,7 @@ let transaction (sender:wallet) (reciever:wallet) amount =
         let newSender = {
             balance     = sender.balance - amount;
             publicKey   = sender.publicKey
-        } in
+    } in
         let newReciever = {
             balance     = reciever.balance + amount;
             publicKey   = reciever.publicKey
@@ -61,12 +67,10 @@ let transaction (sender:wallet) (reciever:wallet) amount =
 
     let pubSender,pubReciever = _transaction pubSender pubReciever amount in
     let timeStamp   = string_of_float @@ Unix.time() in
-        {
-            id = timeStamp;
-            outputs = pubSender, pubReciever
-        }
+    let id = timeStamp in
+    {
+        id = timeStamp;
+        outputs = pubSender, pubReciever;
+        signature = signTransaction id sender
+    }
 
-let signTransaction trans sender = 
-    let stringRepr = Yojson.Safe.to_string @@ yojson_of_transaction trans in
-    let hashed = Utils.hash stringRepr in
-    Utils.sign sender.keyPair hashed   
