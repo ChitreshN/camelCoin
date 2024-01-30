@@ -1,6 +1,7 @@
 open Ppx_yojson_conv_lib.Yojson_conv.Primitives;;
 
 type publicKey = {
+    size : int;
     n : string; (*modulo*)
     e : string;  (*public exponent*)
 }[@@deriving yojson]
@@ -30,6 +31,7 @@ let initWallet() =
         balance = 500;
         keyPair = keyPair;
         publicKey = {
+            size = keyPair.size;
             n = keyPair.n;
             e = keyPair.e
         }
@@ -38,7 +40,16 @@ let initWallet() =
 let signTransaction id sender = 
     let stringRepr = id in
     let hashed = Utils.hash stringRepr in
-    Utils.sign sender.keyPair hashed   
+    Utils.sign sender.keyPair hashed;;
+
+let verifyTransaction key signature dataHash = 
+    let size    = key.size in
+    let n       = key.n in
+    let e       = key.e in
+
+    match dataHash = Utils.verifySignature size n e signature with
+    true    -> "Valid"
+    | false -> "In valid";;
 
 let transaction (sender:wallet) (reciever:wallet) amount = 
     let pubSender = {
