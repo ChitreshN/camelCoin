@@ -51,6 +51,7 @@ let verifyTransaction key signature dataHash =
     true    -> "Valid"
     | false -> "In valid";;
 
+
 let transaction (sender:wallet) (reciever:wallet) amount = 
     let pubSender = {
         balance = sender.balance; publicKey = sender.publicKey
