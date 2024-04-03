@@ -19,5 +19,5 @@
 
 ### Deferred to later
 
-* The peer to peer server requires a us to open a client side connection, which even after multiple
+* The peer to peer server requires us to open a client side connection, which even after multiple
 attempts I'm unable to figure out how
